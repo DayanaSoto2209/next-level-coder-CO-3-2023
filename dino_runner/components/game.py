@@ -7,7 +7,10 @@ from dino_runner.utils.constants import (
     SCREEN_WIDTH, 
     TITLE, 
     FPS,
-    FONT_ARIAL
+    FONT_ARIAL,
+    MOON,
+    SUN,
+    STAR
     )
 from dino_runner.components.dinosaur import Dinosaur
 from dino_runner.components.obstacles.obstacle_manager import ObstacleManager
@@ -26,17 +29,18 @@ class Game:
         self.x_pos_bg = 0
         self.y_pos_bg = 380
         self.points = 0
+        self.colors = 0
         self.player = Dinosaur()
         self.obstacle_manager = ObstacleManager()
         self.power_up_manager = PowerUpManager()
         self.heart_manager = HeartManager()
         
-        
+    
     def increase_score(self):
         self.points += 1
         if self.points / 100 == 0:
             self.game_speed += 1
-        
+  
         self.player.check_invisibility()
         
     def run(self):
@@ -47,6 +51,14 @@ class Game:
             self.update()
             self.draw()
         pygame.quit()
+        
+    def play(self):
+        self.playing = True
+        while self.playing:
+            self.events()
+            self.update()
+            self.draw()
+        pygame.time.delay(1000)
 
     def events(self):
         for event in pygame.event.get():
@@ -63,6 +75,7 @@ class Game:
     def draw(self):
         self.clock.tick(FPS)
         self.screen.fill((255, 255, 255))
+        self.black_While() 
         self.draw_background()
         self.player.draw(self.screen)
         self.obstacle_manager.draw(self.screen)
@@ -71,6 +84,25 @@ class Game:
         self.heart_manager.draw(self.screen)
         pygame.display.update()
         pygame.display.flip()
+        
+        
+    def black_While(self):
+        self.colors += 1
+        if self.colors >= 200:
+            self.screen.fill((0, 0, 0))
+            self.screen.blit(MOON, (150, 20)) 
+            self.star()
+            if self.colors >= 400:
+                self.colors = 0
+        else:
+            self.screen.fill((255,255,255))
+            self.screen.blit(SUN, (500,10))
+            
+    def star(self):
+        image_width = STAR.get_width() 
+        self.screen.blit(STAR, (image_width + self.x_pos_bg +1520, self.y_pos_bg -250))
+        self.screen.blit(STAR, (image_width + self.x_pos_bg +1870, self.y_pos_bg -350))
+        self.screen.blit(STAR, (image_width + self.x_pos_bg +2400 , self.y_pos_bg -300))        
 
     def draw_background(self):
         image_width = BG.get_width()
@@ -88,3 +120,4 @@ class Game:
         rect.x = 1000
         rect.y = 10
         self.screen.blit(surface, rect)
+    

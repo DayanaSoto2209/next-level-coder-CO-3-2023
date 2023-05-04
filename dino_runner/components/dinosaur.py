@@ -8,7 +8,11 @@ from dino_runner.utils.constants import (
     SHIELD_TYPE,
     RUNNING_SHIELD,
     DUCKING_SHIELD,
-    JUMPING_SHIELD
+    JUMPING_SHIELD,
+    HAMMER_TYPE,
+    RUNNING_HAMMER,
+    DUCKING_HAMMER,
+    JUMPING_HAMMER
 )
 
 class Dinosaur(Sprite):
@@ -18,9 +22,9 @@ class Dinosaur(Sprite):
     JUMP_VEL = 8.5
     
     def __init__(self):
-        self.run_img = {DEFAULT_TYPE : RUNNING, SHIELD_TYPE: RUNNING_SHIELD}
-        self.duck_img = {DEFAULT_TYPE : DUCKING, SHIELD_TYPE: DUCKING_SHIELD}
-        self.jump_img = {DEFAULT_TYPE :JUMPING , SHIELD_TYPE: JUMPING_SHIELD}
+        self.run_img = {DEFAULT_TYPE : RUNNING, SHIELD_TYPE: RUNNING_SHIELD, HAMMER_TYPE: RUNNING_HAMMER}
+        self.duck_img = {DEFAULT_TYPE : DUCKING, SHIELD_TYPE: DUCKING_SHIELD, HAMMER_TYPE: DUCKING_HAMMER}
+        self.jump_img = {DEFAULT_TYPE :JUMPING , SHIELD_TYPE: JUMPING_SHIELD, HAMMER_TYPE: JUMPING_HAMMER}
         self.type = DEFAULT_TYPE
         self.image = self.run_img[self.type][0]
         
@@ -32,6 +36,7 @@ class Dinosaur(Sprite):
         self.dino_duck = False
         self.dino_jump = False
         self.jump_vel = self.JUMP_VEL
+        self.action = self.dino_jump
         self.setup_states()
     
     def setup_states(self):
@@ -46,13 +51,16 @@ class Dinosaur(Sprite):
             self.duck()   
         if self.dino_run:
             self.run() 
-            
+        
                 
         if user_input[pygame.K_DOWN] and not self.dino_jump:
             self.dino_run = False
             self.dino_duck  = True
             self.dino_jump = False
         elif user_input[pygame.K_UP] and not self.dino_jump:
+            pygame.mixer.music.load('dino_runner/components/music/jump.mp3')
+            pygame.mixer.music.play()
+            self.action = self.dino_jump
             self.dino_run = False
             self.dino_duck  = False
             self.dino_jump = True  
@@ -102,9 +110,8 @@ class Dinosaur(Sprite):
                 
             if not time_to_show >= 0:
                 self.shield = False
-                self.update_to_default(SHIELD_TYPE)
+                self.update_to_default()
                 
     
-    def update_to_default(self, current_type):
-        if self.type == current_type:
-            self.type = DEFAULT_TYPE
+    def update_to_default(self):
+        self.type = DEFAULT_TYPE

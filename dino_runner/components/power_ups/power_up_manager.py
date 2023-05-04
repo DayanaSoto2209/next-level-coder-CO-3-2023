@@ -24,6 +24,17 @@ class PowerUpManager:
         
         for power_up in self.power_ups:
             power_up.update(game_speed, self.power_ups)
+            if player.dino_rect.colliderect(power_up.rect):
+                player.shield = True
+                player.type = power_up.type
+                
+                
+                start_time = pygame.time.get_ticks()
+                time_random = random.randrange(5, 8)
+                player.shield_time_up = start_time + (time_random * 1000)
+                
+                self.power_ups.remove(power_up)
+             
     
     def draw(self, screen):
         for power_up in self.power_ups:
